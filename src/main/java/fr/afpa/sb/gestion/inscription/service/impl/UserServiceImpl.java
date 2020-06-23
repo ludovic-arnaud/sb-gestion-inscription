@@ -61,6 +61,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public UserDTO createUser(UserDTO userDTO) {
 
+		String password = userDTO.getPassword();
+
+		if (!checkPassword(password)) {
+			throw new BadRequestException("password not valid");
+		}
+
 		Optional<Utilisateur> optUser = userDAO.findByEmail(userDTO.getEmail());
 
 		if (optUser.isPresent()) {
@@ -79,18 +85,27 @@ public class UserServiceImpl implements UserService {
 
 		Optional<Utilisateur> optUser = userDAO.findById(userDTO.getIdutilisateur());
 
-		if (!optUser.isPresent()) {
-			throw new ResourceNotFoundException("user with " + userDTO.getIdutilisateur() + " not found");
+		if (userDTO.getPassword() == null || userDTO.getPassword().isEmpty()) {
+			userDTO.setPassword(optUser.get().getPassword());
+		}
+		if (!checkPassword(userDTO.getPassword())) {
+			throw new BadRequestException("password not valid");
 		} else {
 
-			Optional<Utilisateur> optUserByMail = userDAO.findByEmail(userDTO.getEmail());
+			if (!optUser.isPresent()) {
+				throw new ResourceNotFoundException("user with " + userDTO.getIdutilisateur() + " not found");
+			} else {
 
-			if (optUserByMail.isPresent() && id != optUserByMail.get().getIdutilisateur()) {
-				throw new BadRequestException("user with " + userDTO.getEmail() + " already exists");
+				Optional<Utilisateur> optUserByMail = userDAO.findByEmail(userDTO.getEmail());
+
+				if (optUserByMail.isPresent() && id != optUserByMail.get().getIdutilisateur()) {
+					throw new BadRequestException("user with " + userDTO.getEmail() + " already exists");
+				}
+				Utilisateur user = userDAO.save(Mapper.map(userDTO, Utilisateur.class));
+				userDTO = Mapper.map(user, UserDTO.class);
 			}
-			Utilisateur user = userDAO.save(Mapper.map(userDTO, Utilisateur.class));
-			return Mapper.map(user, UserDTO.class);
 		}
+		return userDTO;
 	}
 
 	@Override
@@ -129,6 +144,12 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public CollaborateurDTO createCollaborateur(CollaborateurDTO collaborateurDTO) {
 
+		String password = collaborateurDTO.getPassword();
+
+		if (!checkPassword(password)) {
+			throw new BadRequestException("password not valid");
+		}
+
 		Optional<Utilisateur> optUser = userDAO.findByEmail(collaborateurDTO.getEmail());
 
 		if (optUser.isPresent()) {
@@ -153,5 +174,51 @@ public class UserServiceImpl implements UserService {
 				return collaborateurDTO;
 			}
 		}
+	}
+
+	@Override
+	@Transactional
+	public CollaborateurDTO updateCollaborateur(Integer id, CollaborateurDTO collaborateurDTO) {
+
+		collaborateurDTO.setIdutilisateur(id);
+
+		Optional<Collaborateur> optCollaborateur = collaborateurDAO.findById(collaborateurDTO.getIdutilisateur());
+
+		if (collaborateurDTO.getPassword() == null || collaborateurDTO.getPassword().isEmpty()) {
+			collaborateurDTO.setPassword(optCollaborateur.get().getPassword());
+		}
+		if (!checkPassword(collaborateurDTO.getPassword())) {
+			throw new BadRequestException("password not valid");
+		} else {
+			if (!optCollaborateur.isPresent()) {
+				throw new ResourceNotFoundException("user with " + collaborateurDTO.getIdutilisateur() + " not found");
+			} else {
+
+				Optional<Collaborateur> optCollByMail = collaborateurDAO.findByEmail(collaborateurDTO.getEmail());
+
+				if (optCollByMail.isPresent() && id != optCollByMail.get().getIdutilisateur()) {
+					throw new BadRequestException("user with " + collaborateurDTO.getEmail() + " already exists");
+				}
+				Collaborateur collaborateur = collaborateurDAO.save(Mapper.map(collaborateurDTO, Collaborateur.class));
+				collaborateurDTO = Mapper.map(collaborateur, CollaborateurDTO.class);
+			}
+		}
+		return collaborateurDTO;
+	}
+
+	private boolean checkPassword(String password) {
+		boolean check = false;
+		if (password != null && password.length() >= 6 && password.length() <= 15) {
+			check = true;
+		} else {
+			check = false;
+		}
+		return check;
+	}
+
+	@Override
+	public List<CollaborateurDTO> findAllCollaborateur() {
+		List<Collaborateur> list = collaborateurDAO.findAll();
+		return Mapper.map(list, CollaborateurDTO.class);
 	}
 }

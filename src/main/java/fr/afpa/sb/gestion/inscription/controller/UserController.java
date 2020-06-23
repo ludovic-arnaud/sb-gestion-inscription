@@ -37,6 +37,11 @@ public class UserController {
 		return userService.findAllUser();
 	}
 	
+	@GetMapping("/colls")
+	public List<CollaborateurDTO> retrieveAllCollaborateurs(){
+		return userService.findAllCollaborateur();
+	}
+	
 	@GetMapping("/utilisateur/{id}")
 	public ResponseEntity<UserDTO> retrieveUser(@PathVariable(value = "id") Integer id) {
 		return ResponseEntity.ok().body(userService.findUserByID(id));
@@ -61,6 +66,11 @@ public class UserController {
 	@PostMapping("/coll")
 	public ResponseEntity<CollaborateurDTO> addCollaborateur(@Valid @RequestBody CollaborateurDTO collaborateurDTO){
 		return ResponseEntity.ok().body(userService.createCollaborateur(collaborateurDTO));
+	}
+	
+	@PutMapping("/coll/{id}")
+	public ResponseEntity<CollaborateurDTO> updateCollaborateur(@PathVariable(value = "id") Integer id, @Valid @RequestBody CollaborateurDTO collaborateurDTO)  {
+		return ResponseEntity.ok().body(userService.updateCollaborateur(id, collaborateurDTO));
 	}
 
 }

@@ -21,7 +21,6 @@ public class UserDTO implements Serializable {
 
 	@NotNull
 	@Size(min = 5, max = 30)
-
 	private String email;
 
 	private Integer etat;
@@ -30,8 +29,6 @@ public class UserDTO implements Serializable {
 	@Size(min = 1, max = 30)
 	private String nom;
 
-	@NotNull
-	@Size(min = 6, max = 15)
 	private String password;
 
 	private String prenom;
