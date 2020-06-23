@@ -6,9 +6,11 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDTO implements Serializable {
-	
+
 	private Integer idutilisateur;
 
 	private String adresse;
@@ -18,27 +20,46 @@ public class UserDTO implements Serializable {
 	private LocalDate datenaissance;
 
 	@NotNull
-	@Size(min=5,max=30)
-	
+	@Size(min = 5, max = 30)
+
 	private String email;
 
 	private Integer etat;
-	
+
 	@NotNull
-	@Size(min=1,max=30)
+	@Size(min = 1, max = 30)
 	private String nom;
-	
+
 	@NotNull
-	@Size(min=6,max=15)
+	@Size(min = 6, max = 15)
 	private String password;
-	
+
 	private String prenom;
 
 	private Integer tel;
-	
+
+	private String typediscriminant;
+
 	public UserDTO() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public UserDTO(Integer idutilisateur, String adresse, String codepersonnelcentre, LocalDate datenaissance,
+			String email, Integer etat, String nom, String password, String prenom, Integer tel,
+			String typediscriminant) {
+		super();
+		this.idutilisateur = idutilisateur;
+		this.adresse = adresse;
+		this.codepersonnelcentre = codepersonnelcentre;
+		this.datenaissance = datenaissance;
+		this.email = email;
+		this.etat = etat;
+		this.nom = nom;
+		this.password = password;
+		this.prenom = prenom;
+		this.tel = tel;
+		this.typediscriminant = typediscriminant;
 	}
 
 	/**
@@ -109,10 +130,12 @@ public class UserDTO implements Serializable {
 		this.nom = nom;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -133,6 +156,12 @@ public class UserDTO implements Serializable {
 		this.tel = tel;
 	}
 
-	
+	public String getTypediscriminant() {
+		return typediscriminant;
+	}
+
+	public void setTypediscriminant(String typediscriminant) {
+		this.typediscriminant = typediscriminant;
+	}
 
 }

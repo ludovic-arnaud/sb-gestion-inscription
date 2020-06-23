@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.afpa.sb.gestion.inscription.model.CollaborateurDTO;
 import fr.afpa.sb.gestion.inscription.model.UserDTO;
 import fr.afpa.sb.gestion.inscription.service.UserService;
 
@@ -55,6 +56,11 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Integer id) {
 		userService.deleteUserById(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+	
+	@PostMapping("/coll")
+	public ResponseEntity<CollaborateurDTO> addCollaborateur(@Valid @RequestBody CollaborateurDTO collaborateurDTO){
+		return ResponseEntity.ok().body(userService.createCollaborateur(collaborateurDTO));
 	}
 
 }
