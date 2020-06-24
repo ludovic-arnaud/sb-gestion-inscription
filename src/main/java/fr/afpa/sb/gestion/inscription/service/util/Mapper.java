@@ -7,11 +7,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class Mapper {
+public class Mapper<T> {
 
     private static final ModelMapper mapper = new ModelMapper();
 
-    private Mapper() {
+    protected Mapper() {
     }
 
     public static  <T, E> T map(E source, Class<T> destinationType) {

@@ -43,8 +43,8 @@ public class UserController {
 
 	@GetMapping("/users")
 	public ResponseEntity<Page<UserDTO>> retrieveAllUsersPaginated(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "email") String sortBy) {
-		Page<UserDTO> pageUser = userService.findPaginated(page, size, Sort.by(sortBy));
+			@RequestParam(defaultValue = "5") int size, @RequestParam(defaultValue = "email") String sortedBy) {
+		Page<UserDTO> pageUser = userService.findPaginated(page, size, Sort.by(sortedBy));
 		return new ResponseEntity<Page<UserDTO>>(pageUser, new HttpHeaders(), HttpStatus.OK);
 	}
 

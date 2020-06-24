@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Pageable;
 
 import fr.afpa.sb.gestion.inscription.constantes.Constantes;
 import fr.afpa.sb.gestion.inscription.entity.Collaborateur;
@@ -27,6 +27,8 @@ import fr.afpa.sb.gestion.inscription.repository.SessionDAO;
 import fr.afpa.sb.gestion.inscription.repository.UserDAO;
 import fr.afpa.sb.gestion.inscription.service.UserService;
 import fr.afpa.sb.gestion.inscription.service.util.Mapper;
+import fr.afpa.sb.gestion.inscription.service.util.MapperWithLink;
+import fr.afpa.sb.gestion.inscription.service.util.UserDTOLinkCreator;
 
 @Transactional(readOnly = true)
 @Service
@@ -39,6 +41,9 @@ public class UserServiceImpl implements UserService {
 	private CollaborateurDAO collaborateurDAO;
 
 	private SessionDAO sessionDAO;
+	
+	@Autowired
+	private UserDTOLinkCreator userDTOLinkCreator;
 
 	@Autowired
 	public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, CollaborateurDAO collaborateurDAO, SessionDAO sessionDAO) {
@@ -129,7 +134,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserDTO> findAllUser() {
 		List<Utilisateur> list = userDAO.findAll();
-		return Mapper.map(list, UserDTO.class);
+		if (list.isEmpty()) {
+			throw new ResourceNotFoundException("list is empty");
+		}
+		return MapperWithLink.map(list, UserDTO.class, userDTOLinkCreator);
 	}
 
 	@Override
@@ -224,17 +232,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<CollaborateurDTO> findAllCollaborateur() {
 		List<Collaborateur> list = collaborateurDAO.findAll();
+		if (list.isEmpty()) {
+			throw new ResourceNotFoundException("list is empty");
+		}
 		return Mapper.map(list, CollaborateurDTO.class);
 	}
 
 	@Override
 	public Page<UserDTO> findPaginated(int page, int size, Sort sort) {
-		
+
 		Pageable pageRequest = PageRequest.of(page, size, sort);
-		
+
 		Page<Utilisateur> pageUser = userDAO.findAll(pageRequest);
-		
-		if(pageUser.hasContent()) {
+
+		if (pageUser.hasContent()) {
 			List<UserDTO> listUser = Mapper.map(pageUser.getContent(), UserDTO.class);
 			Page<UserDTO> pageUserDTO = new PageImpl<UserDTO>(listUser, pageRequest, pageUser.getTotalElements());
 			return pageUserDTO;
