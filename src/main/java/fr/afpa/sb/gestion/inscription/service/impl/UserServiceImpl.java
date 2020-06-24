@@ -1,9 +1,14 @@
 package fr.afpa.sb.gestion.inscription.service.impl;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -220,5 +225,23 @@ public class UserServiceImpl implements UserService {
 	public List<CollaborateurDTO> findAllCollaborateur() {
 		List<Collaborateur> list = collaborateurDAO.findAll();
 		return Mapper.map(list, CollaborateurDTO.class);
+	}
+
+	@Override
+	public Page<UserDTO> findPaginated(int page, int size, Sort sort) {
+		
+		PageRequest pageRequest = PageRequest.of(page, size, sort);
+		
+		Page<Utilisateur> pageUser = userDAO.findAll(pageRequest);
+		
+		if(pageUser.hasContent()) {
+			List<UserDTO> listUser = Mapper.map(pageUser.getContent(), UserDTO.class);
+			int start = (int) pageRequest.getOffset();
+			int end = ((start + pageRequest.getPageSize()) > listUser.size() ? listUser.size() : (start + pageRequest.getPageSize()));
+			Page<UserDTO> pageUserDTO = new PageImpl<UserDTO>(listUser.subList(start, end), pageRequest, listUser.size());
+			return pageUserDTO;
+		} else {
+			throw new BadRequestException("page can't be returned");
+		}
 	}
 }
