@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.afpa.sb.gestion.inscription.model.CollaborateurDTO;
 import fr.afpa.sb.gestion.inscription.model.UserDTO;
 import fr.afpa.sb.gestion.inscription.service.UserService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 
 @RestController
 @RequestMapping("/userManagment")
@@ -36,6 +38,7 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@ApiOperation(value="renvoie tous les utilisateurs")
 	@GetMapping("/utilisateurs")
 	public List<UserDTO> retrieveAllUsers() {
 		return userService.findAllUser();
