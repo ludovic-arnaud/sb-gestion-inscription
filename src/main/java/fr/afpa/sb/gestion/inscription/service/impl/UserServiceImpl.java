@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserDTOLinkCreator userDTOLinkCreator;
+	
 
 	@Autowired
 	public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, CollaborateurDAO collaborateurDAO, SessionDAO sessionDAO) {
@@ -253,5 +255,8 @@ public class UserServiceImpl implements UserService {
 			throw new BadRequestException("page can't be returned");
 		}
 	}
+
+	
+	
 
 }

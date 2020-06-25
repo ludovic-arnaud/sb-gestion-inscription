@@ -22,4 +22,6 @@ public interface UserService {
 	public CollaborateurDTO createCollaborateur(CollaborateurDTO collaborateurDTO);
 	public CollaborateurDTO updateCollaborateur(Integer id, CollaborateurDTO collaborateurDTO);
 	public List<CollaborateurDTO> findAllCollaborateur();
+	
+
 }
